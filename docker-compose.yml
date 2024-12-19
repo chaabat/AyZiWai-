@@ -40,21 +40,21 @@ services:
     depends_on:
       - db
 
-  jenkins:
-    container_name: AyZiWai-Jenkins
-    image: "jenkins/jenkins:lts"
-    restart: always
-    user: root
-    ports:
-      - "9090:8080"
-      - "50000:50000"
-    volumes:
-      - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - network-data
-    environment:
-      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+  # jenkins:
+  #   container_name: AyZiWai-Jenkins
+  #   image: "jenkins/jenkins:lts"
+  #   restart: always
+  #   user: root
+  #   ports:
+  #     - "9090:8080"
+  #     - "50000:50000"
+  #   volumes:
+  #     - jenkins_home:/var/jenkins_home
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   networks:
+  #     - network-data
+  #   environment:
+  #     - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
 
 networks:
   network-data:
