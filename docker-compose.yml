@@ -25,36 +25,42 @@ services:
       - "8085:8085"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=mongodb://admin:admin@AyZiWai-DB:27017/AyZiWai?authSource=admin
-      - SPRING_DATASOURCE_USERNAME=admin
-      - SPRING_DATASOURCE_PASSWORD=admin
-      - SWAGGER_ACTIVATION=false
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - SPRING_JPA_SHOW_SQL=false
-      - SPRING_APPLICATION_NAME=AyZiWai
-      - SPRING_SESSION_STORE_TYPE=jdbc
-      - SERVER_PORT=8085
-      - SPRING_SESSION_JDBC_INITIALIZE_SCHEMA=always
+      - SPRING_DATA_MONGODB_URI=mongodb://admin:admin@db:27017/AyZiWai?authSource=admin
     networks:
       - network-data
     depends_on:
       - db
 
-  # jenkins:
-  #   container_name: AyZiWai-Jenkins
-  #   image: "jenkins/jenkins:lts"
-  #   restart: always
-  #   user: root
-  #   ports:
-  #     - "9090:8080"
-  #     - "50000:50000"
-  #   volumes:
-  #     - jenkins_home:/var/jenkins_home
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   networks:
-  #     - network-data
-  #   environment:
-  #     - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+  sonarqube:
+    image: sonarqube:lts
+    container_name: sonarqube
+    ports:
+      - "9001:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    networks:
+      - network-data
+
+  jenkins-docker:
+    image: jenkins/jenkins:lts
+    container_name: jenkins-docker
+    restart: unless-stopped
+    privileged: true
+    user: root
+    ports:
+      - "9090:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - GITHUB_REPO=https://github.com/yourusername/AyZiWai.git
+    networks:
+      - network-data
 
 networks:
   network-data:
@@ -63,5 +69,7 @@ networks:
 volumes:
   db:
     driver: local
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
   jenkins_home:
-    driver: local
