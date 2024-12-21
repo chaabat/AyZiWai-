@@ -3,7 +3,7 @@ version: "3.1"
 services:
   db:
     container_name: AyZiWai-DB
-    image: "mongo:latest"
+    image: "mongo:4.2"  # Specify a stable version to avoid delays
     restart: always
     ports:
       - "27017:27017"
@@ -30,6 +30,18 @@ services:
       - network-data
     depends_on:
       - db
+
+  test-runner:
+    container_name: AyZiWai-Test
+    image: maven:3-eclipse-temurin-21-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: [ "mvn", "test" ]
+    depends_on:
+      - spring-app
+    networks:
+      - network-data
 
   sonarqube:
     image: sonarqube:lts
